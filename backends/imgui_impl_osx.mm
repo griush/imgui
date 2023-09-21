@@ -13,10 +13,14 @@
 
 // You can use unmodified imgui_impl_* files in your project. See examples/ folder for examples of using this.
 // Prefer including the entire imgui/ repository into your project (either as a copy or as a submodule), and only build the backends you need.
-// If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
-// Read online: https://github.com/ocornut/imgui/tree/master/docs
+// Learn about Dear ImGui:
+// - FAQ                  https://dearimgui.com/faq
+// - Getting Started      https://dearimgui.com/getting-started
+// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
+// - Introduction, links and more at the top of imgui.cpp
 
 #import "imgui.h"
+#ifndef IMGUI_DISABLE
 #import "imgui_impl_osx.h"
 #import <Cocoa/Cocoa.h>
 #import <Carbon/Carbon.h>
@@ -477,7 +481,6 @@ void ImGui_ImplOSX_Shutdown()
 {
     ImGui_ImplOSX_Data* bd = ImGui_ImplOSX_GetBackendData();
     IM_ASSERT(bd != nullptr && "No platform backend to shutdown, or already shutdown?");
-    ImGuiIO& io = ImGui::GetIO();
 
     bd->Observer = nullptr;
     if (bd->Monitor != nullptr)
@@ -486,10 +489,12 @@ void ImGui_ImplOSX_Shutdown()
         bd->Monitor = nullptr;
     }
 
+    ImGui_ImplOSX_DestroyBackendData();
+
+    ImGuiIO& io = ImGui::GetIO();
     io.BackendPlatformName = nullptr;
     io.BackendPlatformUserData = nullptr;
     io.BackendFlags &= ~(ImGuiBackendFlags_HasMouseCursors | ImGuiBackendFlags_HasGamepad);
-    ImGui_ImplOSX_DestroyBackendData();
 }
 
 static void ImGui_ImplOSX_UpdateMouseCursor()
@@ -800,3 +805,7 @@ static void ImGui_ImplOSX_AddTrackingArea(NSView* _Nonnull view)
         return event;
     }];
 }
+
+//-----------------------------------------------------------------------------
+
+#endif // #ifndef IMGUI_DISABLE
